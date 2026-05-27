@@ -1,0 +1,21 @@
+# binaries
+*.exe
+*.out
+*.log
+
+# Go build
+/bin/
+/dist/
+
+# env files
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# temp files
+tmp/
