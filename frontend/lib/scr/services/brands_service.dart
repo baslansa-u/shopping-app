@@ -15,7 +15,8 @@ class BrandServices {
     try {
       var response = await client.get(Uri.parse('$baseUrl/brands'));
 
-      List result = jsonDecode(response.body);
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      List result = json['data'];
 
       for (int i = 0; i < result.length; i++) {
         BransDataModel post =
@@ -38,7 +39,8 @@ class BrandAppleServices {
       var response =
           await client.get(Uri.parse('$baseUrl/products?brand=apple'));
 
-      List result = jsonDecode(response.body);
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      List result = json['data'];
 
       for (int i = 0; i < result.length; i++) {
         ProductDataModel post =
@@ -60,8 +62,8 @@ class BrandSamsungServices {
     try {
       var response =
           await client.get(Uri.parse('$baseUrl/products?brand=samsung'));
-
-      List result = jsonDecode(response.body);
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      List result = json['data'];
 
       for (int i = 0; i < result.length; i++) {
         ProductDataModel post =

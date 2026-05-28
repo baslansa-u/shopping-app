@@ -4,7 +4,7 @@ import 'package:shopping/scr/bloc/count/counter_bloc.dart';
 import 'package:shopping/scr/models/product_model.dart';
 import 'package:shopping/scr/pages/payment_page.dart';
 
-class CartPage extends StatefulWidget {
+class CartPage extends StatelessWidget {
   final List<ProductDataModel> productCounts;
   final int totalPrice;
 
@@ -12,21 +12,16 @@ class CartPage extends StatefulWidget {
       {Key? key, required this.productCounts, required this.totalPrice})
       : super(key: key);
 
-  @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
-  Map<ProductDataModel, double> prices = {};
-
-//คำนวณ
-  num calculateTotalPrice() {
+  num calculateTotalPrice(Map<ProductDataModel, int> counts) {
     num total = 0;
-    for (var item in widget.productCounts) {
-      total += (prices[item] ?? item.price) *
-          (BlocProvider.of<CounterBloc>(context).state.productCounts[item] ??
-              0);
+
+    for (var item in productCounts) {
+      final qty = counts[item] ?? 0;
+      if (qty == 0) continue;
+
+      total += item.price * qty;
     }
+
     return total;
   }
 
@@ -34,238 +29,46 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<CounterBloc, CounterState>(
       builder: (context, state) {
-        // ตรวจสอบสถานะ isEmpty เพื่ออัพเดต UI
-        if (widget.productCounts.isEmpty) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Cart'),
-              centerTitle: false,
-            ),
-            body: const Center(
-              child: Text(
-                'ไม่มีสินค้าในตระกร้า',
-                style: TextStyle(fontSize: 18, color: Colors.red),
-              ),
-            ),
-            bottomNavigationBar: BlocBuilder<CounterBloc, CounterState>(
-              builder: (context, index) {
-                return BottomAppBar(
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Container(
-                            color: Colors.white,
-                            child: Text(
-                              '    ชำระเงินทั้งหมด ${calculateTotalPrice()} บาท',
-                              style: const TextStyle(
-                                  fontSize: 16, color: Colors.green),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            color: widget.productCounts.isEmpty
-                                ? Colors.grey
-                                : Colors.blue,
-                            height: kBottomNavigationBarHeight,
-                            child: widget.productCounts.isEmpty
-                                ? const IconButton(
-                                    onPressed: null, // คลิกไม่ได้ = null
-                                    icon: Icon(
-                                      Icons.monetization_on,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PaymentPage(
-                                            productCounts: widget.productCounts,
-                                            prices: prices,
-                                            calculateTotalPrice:
-                                                calculateTotalPrice(),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(
-                                      Icons.monetization_on,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
-        // ลบสินค้าจากรายการเมื่อ productCount เป็น 0
-        widget.productCounts
-            .removeWhere((item) => (state.productCounts[item] ?? 0) == 0);
-        print('${state.productCounts}');
+        final counts = state.productCounts;
+
+        final items = productCounts.where((e) => (counts[e] ?? 0) > 0).toList();
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Cart'),
-            centerTitle: false,
           ),
-          body: widget.productCounts.isEmpty
+          body: items.isEmpty
               ? const Center(
                   child: Text(
                     'ไม่มีสินค้าในตระกร้า',
                     style: TextStyle(fontSize: 18, color: Colors.red),
                   ),
                 )
-              : ListView.builder(
-                  itemCount: widget.productCounts.length,
+              : ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
-                    final item = widget.productCounts[index];
-                    return Center(
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: ListTile(
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 26),
-                            leading: Image.network(item.image),
-                            title: Text(item.name),
-                            subtitle: Text(
-                              'ราคา: ${((prices[item] ?? item.price) * 1)}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            trailing: Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      //remove
-                                      Container(
-                                        height: 35,
-                                        width: 35,
-                                        child: IconButton(
-                                          padding: EdgeInsets.zero,
-                                          onPressed: () {
-                                            BlocProvider.of<CounterBloc>(
-                                                    context)
-                                                .add(RemoveProductEvent(item));
-                                          },
-                                          icon: const Icon(
-                                            Icons.remove,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        color: Colors.grey,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: BlocBuilder<CounterBloc,
-                                            CounterState>(
-                                          builder: (context, state) {
-                                            return Text(
-                                                (state.productCounts[item] ?? 0)
-                                                    .toString());
-                                          },
-                                        ),
-                                      ),
-                                      //add
-                                      Container(
-                                        height: 35,
-                                        width: 35,
-                                        child: IconButton(
-                                          padding: EdgeInsets.zero,
-                                          onPressed: () {
-                                            BlocProvider.of<CounterBloc>(
-                                                    context)
-                                                .add(AddProductEvent(item));
-                                          },
-                                          icon: const Icon(
-                                            Icons.add,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        color: Colors.grey,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    final item = items[index];
+                    final qty = counts[item] ?? 0;
+
+                    return _CartItem(
+                      item: item,
+                      qty: qty,
                     );
                   },
                 ),
-          bottomNavigationBar: BlocBuilder<CounterBloc, CounterState>(
-            builder: (context, index) {
-              return BottomAppBar(
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          color: Colors.white,
-                          child: Text(
-                            '    ชำระเงินทั้งหมด ${calculateTotalPrice()} บาท',
-                            style: const TextStyle(
-                                fontSize: 16, color: Colors.green),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          color: widget.productCounts.isEmpty
-                              ? Colors.grey
-                              : Colors.blue,
-                          height: kBottomNavigationBarHeight,
-                          child: widget.productCounts.isEmpty
-                              ? const IconButton(
-                                  onPressed: null, // คลิกไม่ได้ = null
-                                  icon: Icon(
-                                    Icons.monetization_on,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PaymentPage(
-                                          productCounts: widget.productCounts,
-                                          prices: prices,
-                                          calculateTotalPrice:
-                                              calculateTotalPrice(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    Icons.monetization_on,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
+          bottomNavigationBar: _BottomBar(
+            total: calculateTotalPrice(counts),
+            isEmpty: items.isEmpty,
+            onPay: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PaymentPage(
+                    productCounts: productCounts,
+                    prices: {},
+                    calculateTotalPrice: calculateTotalPrice(counts),
                   ),
                 ),
               );
@@ -273,6 +76,133 @@ class _CartPageState extends State<CartPage> {
           ),
         );
       },
+    );
+  }
+}
+
+class _CartItem extends StatelessWidget {
+  final ProductDataModel item;
+  final int qty;
+
+  const _CartItem({
+    required this.item,
+    required this.qty,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                item.image,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  Text(
+                    '฿${item.price}',
+                    style: const TextStyle(color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+            _QtyControl(item: item, qty: qty),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QtyControl extends StatelessWidget {
+  final ProductDataModel item;
+  final int qty;
+
+  const _QtyControl({
+    required this.item,
+    required this.qty,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {
+            context.read<CounterBloc>().add(RemoveProductEvent(item));
+          },
+          icon: const Icon(Icons.remove),
+        ),
+        Text(qty.toString()),
+        IconButton(
+          onPressed: () {
+            context.read<CounterBloc>().add(AddProductEvent(item));
+          },
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+}
+
+class _BottomBar extends StatelessWidget {
+  final num total;
+  final bool isEmpty;
+  final VoidCallback onPay;
+
+  const _BottomBar({
+    required this.total,
+    required this.isEmpty,
+    required this.onPay,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 8,
+              color: Colors.black12,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'รวม: ฿$total',
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ElevatedButton(
+              onPressed: isEmpty ? null : onPay,
+              child: const Text('ชำระเงิน'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

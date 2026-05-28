@@ -10,3 +10,12 @@ abstract class ProductEvent extends Equatable {
 class FetchProductApple extends ProductEvent {}
 
 class FetchProductSamsung extends ProductEvent {}
+
+class FetchProductsByBrand extends ProductEvent {
+  final String brandName;
+
+  const FetchProductsByBrand(this.brandName);
+
+  @override
+  List<Object> get props => [brandName];
+}

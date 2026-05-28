@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopping/scr/bloc/count/counter_bloc.dart';
-import 'package:shopping/scr/bloc/product/product_bloc.dart';
 import 'package:shopping/scr/bloc/brands/brands_bloc.dart';
-import 'package:shopping/scr/models/product_model.dart';
-import 'package:shopping/scr/pages/cart_page.dart';
+import 'package:shopping/scr/bloc/product/product_bloc.dart';
 import 'package:shopping/scr/pages/product_page.dart';
+import 'package:shopping/scr/bloc/count/counter_bloc.dart';
+import 'package:shopping/scr/pages/cart_page.dart';
 
 class Brand extends StatefulWidget {
   const Brand({Key? key}) : super(key: key);
@@ -15,128 +14,124 @@ class Brand extends StatefulWidget {
 }
 
 class _BrandState extends State<Brand> {
-  final BrandsBloc brandsBloc = BrandsBloc();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Brand'),
-          ],
-        ),
+        title: const Text('Brand'),
       ),
-      body: BlocBuilder<BrandsBloc, BrandsState>(builder: (context, state) {
-        if (state is BrandsLoadingState) {
-          return const Column(
-            children: [
-              (LinearProgressIndicator()),
-              Text(
-                'Loading...',
-                style: TextStyle(color: Colors.blue),
-              ),
-            ],
-          );
-        } else if (state is BrnadsLoadingSuccessState) {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: state.brands.length,
-            itemBuilder: (context, index) {
-              final brand = state.brands[index];
-              return Center(
-                child: Card(
-                  color: Colors.blue,
-                  margin: const EdgeInsets.all(20),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ListTile(
-                        horizontalTitleGap: 30,
-                        minVerticalPadding: 10,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 20),
-                        leading: Container(
+      body: BlocBuilder<BrandsBloc, BrandsState>(
+        builder: (context, state) {
+          if (state is BrandsLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (state is BrnadsLoadingSuccessState) {
+            final brands = state.brands;
+
+            return ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: brands.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final brand = brands[index];
+
+                return InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    context
+                        .read<ProductBloc>()
+                        .add(FetchProductsByBrand(brand.name));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductPage(
+                          brandName: brand.name,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
                           width: 50,
                           height: 50,
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Image.network(
                             brand.logo,
                             fit: BoxFit.contain,
                           ),
                         ),
-                        title: Text(
-                          brand.name,
-                          style: const TextStyle(color: Colors.white),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            brand.name,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                        onTap: () {
-                          if (brand.name == 'Apple') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) => ProductBloc()
-                                    ..add(
-                                      FetchProductApple(),
-                                    ),
-                                  child: const ProductPage(brandName: 'Apple'),
-                                ),
-                              ),
-                            );
-                          } else if (brand.name == 'Samsung') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) => ProductBloc()
-                                    ..add(
-                                      FetchProductSamsung(),
-                                    ),
-                                  child:
-                                      const ProductPage(brandName: 'Samsung'),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ],
                     ),
+                  ),
+                );
+              },
+            );
+          }
+
+          return const SizedBox();
+        },
+      ),
+      floatingActionButton: BlocBuilder<CounterBloc, CounterState>(
+        builder: (context, state) {
+          final productCounts = state.productCounts;
+
+          return FloatingActionButton(
+            backgroundColor: Colors.orange,
+            onPressed: () {
+              if (productCounts.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("ไม่มีสินค้าในตะกร้า"),
+                  ),
+                );
+                return;
+              }
+
+              final products = productCounts.keys.toList();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CartPage(
+                    productCounts: products,
+                    totalPrice: 0,
                   ),
                 ),
               );
             },
+            child: const Icon(Icons.shopping_cart_outlined),
           );
-        } else {
-          return Container();
-        }
-      }),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.orange,
-        onPressed: () {
-          final counterBloc = BlocProvider.of<CounterBloc>(context);
-          final productCounts = counterBloc.state.productCounts;
-          // ignore: unnecessary_null_comparison
-          if (productCounts != null) {
-            final List<ProductDataModel> brandDataModels =
-                productCounts.keys.toList();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CartPage(
-                  productCounts: brandDataModels,
-                  totalPrice: 0,
-                ),
-              ),
-            );
-          } else {}
         },
-        child: const Icon(Icons.shopping_cart_outlined),
       ),
     );
   }

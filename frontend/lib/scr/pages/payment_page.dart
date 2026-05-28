@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping/scr/bloc/count/counter_bloc.dart';
 import 'package:shopping/scr/models/product_model.dart';
 
-class PaymentPage extends StatefulWidget {
+class PaymentPage extends StatelessWidget {
   final List<ProductDataModel> productCounts;
   final num calculateTotalPrice;
   final Map<ProductDataModel, double> prices;
+
   const PaymentPage({
     Key? key,
     required this.prices,
@@ -15,80 +16,111 @@ class PaymentPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PaymentPage> createState() => _PaymentPageState();
-}
-
-class _PaymentPageState extends State<PaymentPage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Payment'),
-        centerTitle: false,
       ),
       body: BlocBuilder<CounterBloc, CounterState>(
         builder: (context, state) {
+          final counts = state.productCounts;
+
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 30, bottom: 10),
-                child: Center(
-                  child: Text(
-                    'ชำระเงินสำเร็จ',
-                    style: TextStyle(fontSize: 30, color: Colors.green),
-                  ),
+              const SizedBox(height: 20),
+              const Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 70,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'ชำระเงินสำเร็จ',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.productCounts.length,
-                itemBuilder: (context, index) {
-                  final item = widget.productCounts[index];
-                  return Container(
-                    height: 50,
-                    // color: Colors.amberAccent,
-                    child: ListTile(
-                      //contentPadding: EdgeInsets.all(0),
-                      //ชื่อสินค้า
-                      leading: SizedBox(
-                        height: 50,
-                        width: 210,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 90, top: 16),
-                          child: Text(
-                            item.name,
-                          ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: productCounts.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final item = productCounts[index];
+                    final qty = counts[item] ?? 0;
+
+                    return Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'x$qty',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '฿${item.price * qty}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      //ราคาสินค้า
-                      trailing: SizedBox(
-                          height: 20,
-                          width: 70,
-                          child: Text(
-                              '${((item.price) * (state.productCounts[item] ?? 0))}')),
-                      //จำนวนสินค้า
-                      title: Text(
-                        '   X ${(state.productCounts[item] ?? 0).toString()}',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              //ราคารวมสินค้า
-              Container(
-                // color: Colors.blue,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 280,
-                  ),
-                  child: Text('รวม        ${widget.calculateTotalPrice}'),
+                    );
+                  },
                 ),
               ),
             ],
           );
         },
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'รวมทั้งหมด',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              '฿$calculateTotalPrice',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

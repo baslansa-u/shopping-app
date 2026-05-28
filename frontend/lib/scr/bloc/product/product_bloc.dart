@@ -26,5 +26,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         emit(ProductLoadedFailState(error: 'Failed to fetch samsung products'));
       }
     });
+    on<FetchProductsByBrand>((event, emit) async {
+      emit(ProductLoadingState());
+      try {
+        List<ProductDataModel> products = [];
+        if (event.brandName.toLowerCase() == 'apple') {
+          products = await BrandAppleServices.fetchData();
+        } else if (event.brandName.toLowerCase() == 'samsung') {
+          products = await BrandSamsungServices.fetchData();
+        }
+        emit(ProductLoadedState(Product: products));
+      } catch (e) {
+        emit(ProductLoadedFailState(
+            error: 'Failed to fetch products for ${event.brandName}'));
+      }
+    });
   }
 }

@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 15",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 45000,
+    "brand": "apple"
+  },
+  {
+    "id": 2,
+    "name": "Galaxy S24",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 38000,
+    "brand": "samsung"
+  },
+  {
+    "id": 3,
+    "name": "iPhone 14",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 38000,
+    "brand": "apple"
+  },
+  {
+    "id": 4,
+    "name": "Galaxy S23",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 32000,
+    "brand": "samsung"
+  },
+  {
+    "id": 5,
+    "name": "iPhone 13",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 30000,
+    "brand": "apple"
+  },
+  {
+    "id": 6,
+    "name": "Galaxy A55",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 15000,
+    "brand": "samsung"
+  },
+  {
+    "id": 7,
+    "name": "iPhone 12",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 25000,
+    "brand": "apple"
+  },
+  {
+    "id": 8,
+    "name": "Galaxy Z Fold 5",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 60000,
+    "brand": "samsung"
+  },
+  {
+    "id": 9,
+    "name": "iPhone 11",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 20000,
+    "brand": "apple"
+  },
+  {
+    "id": 10,
+    "name": "Galaxy Z Flip 5",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 55000,
+    "brand": "samsung"
+  },
+  {
+    "id": 11,
+    "name": "iPhone SE",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 15000,
+    "brand": "apple"
+  },
+  {
+    "id": 12,
+    "name": "Galaxy Note 20",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 28000,
+    "brand": "samsung"
+  },
+  {
+    "id": 13,
+    "name": "iPhone 15 Pro",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 52000,
+    "brand": "apple"
+  },
+  {
+    "id": 14,
+    "name": "Galaxy S24 Ultra",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 48000,
+    "brand": "samsung"
+  },
+  {
+    "id": 15,
+    "name": "iPhone 14 Pro",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 45000,
+    "brand": "apple"
+  },
+  {
+    "id": 16,
+    "name": "Galaxy S22",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 30000,
+    "brand": "samsung"
+  },
+  {
+    "id": 17,
+    "name": "iPhone 13 Mini",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 27000,
+    "brand": "apple"
+  },
+  {
+    "id": 18,
+    "name": "Galaxy A34",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 12000,
+    "brand": "samsung"
+  },
+  {
+    "id": 19,
+    "name": "iPhone XR",
+    "image": "http://10.0.2.2:8080/data/imgs/iphone15.png",
+    "price": 18000,
+    "brand": "apple"
+  },
+  {
+    "id": 20,
+    "name": "Galaxy A14",
+    "image": "http://10.0.2.2:8080/data/imgs/galaxys24.png",
+    "price": 8000,
+    "brand": "samsung"
+  }
+]
