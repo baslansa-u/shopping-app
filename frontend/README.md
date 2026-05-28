@@ -1,14 +1,28 @@
-## 🛍 Shopping App (Flutter + BLoC)
-# Project Overview
-The Shopping App is a shopping application developed using Flutter and BLoC (Business Logic Component) for state management,
-# Key Features
-  * Display Product Listings
-  * Increase Product Quantity
-  * Remove Items from Cart
-  * Calculate Total Price
+# 🛒 Shopping App (Flutter + Go + Redis)
 
+Simple shopping app using Flutter (BLoC) with Go backend and Redis caching.
 
-<img src="https://github.com/user-attachments/assets/a38f3c65-a8c0-4fcd-bd76-97b33986dcfa" width="150" />
-<img src="https://github.com/user-attachments/assets/be2b6722-2737-4889-83c0-1432761f0674" width="150" />
-<img src="https://github.com/user-attachments/assets/a3e7dfb0-e160-4d2f-b321-0f07798486d1" width="150" />
-<img src="https://github.com/user-attachments/assets/39311775-e89f-4614-9dad-6af1c62d9ae6" width="150" />
+---
+
+## 🚀 Tech Stack
+- Flutter
+- Go (Gin)
+- Redis
+- JSON (Mock data)
+
+---
+
+## ✨ Features
+- Product & Brand list
+- Cart system (add/remove)
+- Payment summary
+- Redis caching
+- Static images from server
+
+---
+Demo App  
+<img width="180" alt="image" src="https://github.com/user-attachments/assets/eeee96dd-577e-4017-8e80-5412bf9188e9" />
+<img width="180"  alt="image" src="https://github.com/user-attachments/assets/0419d4da-3703-45db-9ac2-153cec9d7872" />
+<img width="180"  alt="image" src="https://github.com/user-attachments/assets/445f9ccb-32f3-4632-bb8e-20de188aa949" />
+<img width="180"  alt="image" src="https://github.com/user-attachments/assets/317bb2fa-96c3-4b0a-897c-0627cefb08ca" />
+<img width="180"  alt="image" src="https://github.com/user-attachments/assets/b2de3275-2b1e-497f-b281-49ccd42257de" />
